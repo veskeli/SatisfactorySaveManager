@@ -10,7 +10,7 @@ EnvGet, A_LocalAppData, LocalAppData
 #SingleInstance Force
 ;____________________________________________________________
 ;//////////////[vars]/////////////// 
-version = 0.3
+version = 0.4
 AppFolderName = AHKGameScriptsByVeskeli/SatisfactorySaveManager
 appFolder = %A_AppData%\%appfoldername%
 settingsFolder = %A_AppData%\%appfoldername%\Settings
@@ -22,13 +22,13 @@ IfExist, %AppFolderName%\Old_satisfactorySaveManager.ahk
 ;____________________________________________________________
 ;//////////////[Gui]/////////////// 
 Gui Font, s9, Segoe UI
-Gui Add, GroupBox, x8 y8 w348 h99, Saves
-Gui Add, Text, x16 y32 w86 h23 +0x200, Custom saves:
-Gui Add, Text, x16 y64 w74 h23 +0x200, Game saves:
-Gui Add, DropDownList, x112 y32 w120 vlist1, Empty||
-Gui Add, DropDownList, x112 y64 w120 vlist2, Empty||
-Gui Add, Button, x240 y32 w97 h23 gCopyFirstToDesktop, Copy to desktop
-Gui Add, Button, x240 y64 w97 h23 gCopySecondToDesktop, Copy to desktop
+Gui Add, GroupBox, x8 y8 w445 h99, Saves
+Gui Add, Text, x16 y32 w55 h23 +0x200, Folders:
+Gui Add, Text,x16 y64 w64 h23 +0x200, Game saves:
+Gui Add, DropDownList, x85 y32 w258 vlist1 gUpdatelist2, Empty||
+Gui Add, DropDownList, x86 y64 w257 vlist2, Empty||
+;Gui Add, Button, x240 y32 w97 h23 gCopyFirstToDesktop, Copy to desktop
+Gui Add, Button, x352 y64 w97 h23 gCopySecondToDesktop, Copy to desktop
 Gui Add, Button, x16 y112 w108 h32 gImportSave +Disabled, Import save file
 Gui Add, GroupBox, x127 y98 w175 h80, App updates
 Gui Add, CheckBox, x144 y120 w145 h23 +Checked gAutoUpdates vcheckup, Check updates on start
@@ -36,10 +36,10 @@ Gui Add, Button, x152 y144 w119 h23 gcheckForupdates, Check for updates
 Gui Add, Button, x24 y152 w80 h23 gOpenDesktop, Open desktop
 Gui Add, Button, x304 y112 w52 h38 gOpenSaves, Open`nSaves
 
-Gui Show, w367 h185, SatisfactorySaveManager
+Gui Show, w464 h185, SatisfactorySaveManager
 
 SpecialFolder = %A_LocalAppData%\FactoryGame\Saved\SaveGames
-loop, Files, % SpecialFolder "\*.*"
+loop, Files, % SpecialFolder "\*.*", D
 {
 	SplitPath, A_LoopFileName,,,, FileName
 	List .= FileName "|"
@@ -51,8 +51,14 @@ if(T_list != "")
     GuiControl,,list1,|
 }
 GuiControl,,list1,%T_list%
+return
+Updatelist2:
+Gui, Submit, Nohide
+GuiControl,,list2,|
 ;List 2
-SpecialFolder = %A_LocalAppData%\FactoryGame\Saved\SaveGames\common
+SpecialFolder = %A_LocalAppData%\FactoryGame\Saved\SaveGames\%list1%
+T_list =
+List3 =
 loop, Files, % SpecialFolder "\*.*"
 {
 	SplitPath, A_LoopFileName,,,, FileName
@@ -130,6 +136,7 @@ if(newversion != "")
                 IfExist %A_ScriptFullPath%
                 {
                     Run, %A_ScriptFullPath%
+                    ExitApp
                 }
             }
 			ExitApp
